@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nosso Tempo Juntos</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #000000; /* Fundo preto */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            color: #f7c8d1; /* Cor romântica de texto */
+            text-align: center;
+            overflow: hidden;
+            background-image: url('https://www.transparenttextures.com/patterns/heart.png'); /* Coração no fundo */
+            background-size: 100px 100px; /* Tamanho do coração */
+        }
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            font-family: 'Georgia', serif;
+            color: #f9a1bc;
+            text-shadow: 2px 2px 10px rgba(255, 255, 255, 0.6);
+        }
+        h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: #f4a6c0;
+            font-family: 'Georgia', serif;
+        }
+        .time {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.7);
+            margin-top: 20px;
+        }
+        .gallery {
+            display: flex;
+            overflow: hidden;
+            width: 100%;
+            max-width: 600px;
+            margin-top: 20px;
+            border-radius: 15px;
+            border: 5px solid #f7c8d1;
+            box-shadow: 0 0 15px rgba(255, 192, 203, 0.5);
+        }
+        .gallery img {
+            width: 100%;
+            border-radius: 15px;
+            object-fit: cover;
+            transition: opacity 1s ease-in-out;
+        }
+        .button {
+            background-color: #f9a1bc;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.3s ease;
+        }
+        .button:hover {
+            background-color: #e28a9f;
+        }
+        input[type="file"] {
+            display: none; /* Oculta o campo de input */
+        }
+        .file-label {
+            background-color: #f9a1bc;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        .message {
+            margin-top: 20px;
+            font-size: 1.2rem;
+        }
+        .success {
+            color: green;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>Nosso Amor</h1>
+    <h2>Tempo Juntos</h2>
+    <div class="time" id="timer"></div>
+    <div class="gallery" id="gallery">
+        <img src="foto1.jpg" alt="Foto 1" id="img1">
+        <img src="foto2.jpg" alt="Foto 2" id="img2">
+        <img src="foto3.jpg" alt="Foto 3" id="img3">
+    </div>
+    <input type="file" id="fileInput" accept="image/*" onchange="addImage(event)">
+    <label for="fileInput" class="file-label">Adicionar Foto</label>
+    
+    <div id="message" class="message"></div> <!-- Mensagem de sucesso ou erro -->
+
+    <script>
+        let startDate = new Date('2025-02-14T11:05:00'); // Data e hora de início do relacionamento
+        let timerInterval;
+        let currentImageIndex = 0;
+        const images = [
+            'foto1.jpg',
+            'foto2.jpg',
+            'foto3.jpg'
+        ];
+
+        // Função para atualizar o timer
+        function updateTimer() {
+            let now = new Date();
+            let difference = now - startDate;
+            let days = Math.floor(difference / (1000 * 60 * 60 * 24));
+            let hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            let minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+            let seconds = Math.floor((difference % (1000 * 60)) / 1000);
+            document.getElementById('timer').innerHTML = 
+                `Estamos juntos há ${days} dias, ${hours} horas, ${minutes} minutos e ${seconds} segundos.`;
+        }
+
+        // Função para trocar a foto
+        function changeImage() {
+            currentImageIndex = (currentImageIndex + 1) % images.length;
+            let gallery = document.getElementById('gallery');
+            gallery.innerHTML = `<img src="${images[currentImageIndex]}" alt="Foto ${currentImageIndex + 1}" style="opacity: 0;" id="img${currentImageIndex + 1}">`;
+            setTimeout(() => {
+                document.getElementById(`img${currentImageIndex + 1}`).style.opacity = 1;
+            }, 100);
+        }
+
+        function startTimer() {
+            if (!timerInterval) {
+                timerInterval = setInterval(() => {
+                    updateTimer();
+                    changeImage();
+                }, 5000); // Troca de imagem a cada 5 segundos
+            }
+        }
+
+        // Função para adicionar uma imagem à galeria
+        function addImage(event) {
+            const file = event.target.files[0];
+            const messageDiv = document.getElementById('message');
+            
+            if (file && file.type.startsWith('image/')) { // Verifica se o arquivo é uma imagem
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const gallery = document.getElementById('gallery');
+                    const newImage = document.createElement('img');
+                    newImage.src = e.target.result;
+                    newImage.alt = "Nova Foto";
+                    newImage.style.opacity = 0;  // Inicialmente a imagem estará invisível
+                    gallery.appendChild(newImage);  // Adiciona a nova imagem à galeria
+
+                    // Transição suave para mostrar a imagem
+                    setTimeout(() => {
+                        newImage.style.opacity = 1;
+                    }, 100);
+
+                    // Exibe mensagem de sucesso
+                    messageDiv.innerHTML = 'Foto adicionada com sucesso!';
+                    messageDiv.className = 'message success';
+                };
+                reader.readAsDataURL(file);  // Lê o arquivo como uma URL de dados
+            } else {
+                // Exibe mensagem de erro
+                messageDiv.innerHTML = 'Por favor, selecione uma imagem válida.';
+                messageDiv.className = 'message error';
+            }
+        }
+
+        // Chama a função de inicialização
+        startTimer();
+    </script>
+</body>
+</html>
